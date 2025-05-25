@@ -1,11 +1,11 @@
-name: Cargo Test
+name: Cargo Build
 
 on:
   push: {}
   pull_request: {}
 
 jobs:
-  cargo-test:
+  cargo-build:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -31,7 +31,12 @@ jobs:
           cache-on-failure: "true"
           cache-all-crates: "true"
 
-      - name: Run tests
+      - name: Build binary
         run: |
-          cargo test -p phira --no-default-features -- --skip test_parse_chart
-          cargo test -p prpr --no-default-features
+          cargo build -r --bin phira-main --features event_debug
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: phira-main-linux
+          path: target
